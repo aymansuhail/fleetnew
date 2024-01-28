@@ -46,7 +46,7 @@ function App() {
 {/*           
           <Route path="/app/drivers/:id/:firstname" element={<UserDetail />} /> */}
          
-          <Route path="*" element={<Navigate to={token ? "/app/welcome" : "/login"} replace />}/>
+          <Route path="*" element={<Navigate to={token ? "/app/welcome" : "/"} replace />}/>
 
         </Routes>
       </Router>
