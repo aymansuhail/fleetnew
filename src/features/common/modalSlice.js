@@ -21,11 +21,15 @@ export const modalSlice = createSlice({
         },
 
         closeModal: (state, action) => {
-            state.isOpen = false
-            state.bodyType = ""
-            state.title = ""
-            state.extraObject = {}
+            state.isOpen = false;
+            state.bodyType = "";
+            state.title = "";
+            state.extraObject = {};
+        
+            // Check for onConfirm callback and execute it
+          
         },
+        
 
     }
 })

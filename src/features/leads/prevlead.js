@@ -8,7 +8,7 @@ import { CONFIRMATION_MODAL_CLOSE_TYPES, MODAL_BODY_TYPES } from '../../utils/gl
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon'
 import { showNotification } from '../common/headerSlice'
 import { Link } from "react-router-dom"
-import { deleteLeadAsync } from "./leadSlice"
+
 const TopSideButtons = () => {
 
     const dispatch = useDispatch()
@@ -26,9 +26,7 @@ const TopSideButtons = () => {
 
 function Leads(){
 
-    const { leads, isLoading } = useSelector(state => state.leads);
-
-    
+    const {leads } = useSelector(state => state.lead)
     const dispatch = useDispatch()
 
     useEffect(() => {
@@ -36,34 +34,35 @@ function Leads(){
     }, [])
 
     
-    const deleteCurrentLead = (id) => {
-        console.log("Deleting lead with ID:", id);
+
     
+
+    const deleteCurrentLead = (index) => {
         // Open a confirmation modal before deleting
-        // dispatch(
-        //   openModal({
-        //     title: "Confirmation",
-        //     bodyType: MODAL_BODY_TYPES.CONFIRMATION,
-        //     extraObject: {
-        //       message: `Are you sure you want to delete this driver?`,
-        //       type: CONFIRMATION_MODAL_CLOSE_TYPES.LEAD_DELETE,
-        //       id,
-        //     },
-        //   })
-        // );
+        dispatch(
+            openModal({
+                title: "Confirmation",
+                bodyType: MODAL_BODY_TYPES.CONFIRMATION,
+                extraObject: {
+                    message: `Are you sure you want to delete this driver?`,
+                    type: CONFIRMATION_MODAL_CLOSE_TYPES.LEAD_DELETE,
+                    index,
+                },
+            })
+        );
     
-        // Dispatch the deleteLeadAsync action to handle the deletion logic
-        dispatch(deleteLeadAsync(id))
-          .then(() => {
-            // If deletion is successful, show a success notification
-            dispatch(showNotification({ message: "Driver deleted successfully", status: 1 }));
-          })
-          .catch(() => {
-            // If deletion fails, show an error notification
-            dispatch(showNotification({ message: "Failed to delete driver", status: 0 }));
-          });
-      };
-    
+        // Dispatch the deleteLead action to handle the deletion logic
+        dispatch(deleteLead({ index }))
+            .then(() => {
+                // If deletion is successful, show a success notification
+                dispatch(showNotification({ message: "Driver deleted successfully", status: 1 }));
+            })
+            .catch(() => {
+                // If deletion fails, show an error notification
+                dispatch(showNotification({ message: "Failed to delete driver", status: 0 }));
+            });
+    };
+
     return(
         <>
             <TitleCard title="Drivers" topMargin="mt-2" TopSideButtons={<TopSideButtons />}>
@@ -79,33 +78,33 @@ function Leads(){
                             </tr>
                         </thead>
                         <tbody>
-                            {leads && leads.map((l) => (
-                                <tr key={l.id}>
+                            {leads.map((l, k) => (
+                                <tr key={k}>
                                     <td>
                                         <div className="flex items-center space-x-3">
-                                            {/* <div className="avatar">
+                                            <div className="avatar">
                                                 <div className="mask mask-squircle w-12 h-12">
                                                     <img src={l.avatar} alt="Avatar" />
                                                 </div>
-                                            </div> */}
+                                            </div>
                                             <div>
-                                                <div className="font-bold">{l.firstname}</div>
-                                                <div className="text-sm opacity-50">{l.lastname}</div>
+                                                <div className="font-bold">{l.first_name}</div>
+                                                <div className="text-sm opacity-50">{l.last_name}</div>
                                             </div>
                                         </div>
                                     </td>
                                     <td>{l.email}</td>
-                                   <td>{moment(l.updated).format("DD MMM YY HH:mm:ss")}</td>
-
-                                    <td>{l.lastname}</td>
+                                    <td>{moment(new Date()).add(-5 * (k + 2), 'days').format("DD MMM YY")}</td>
+                                    <td>{l.last_name}</td>
                                     <td>
-                                    <button onClick={() => deleteCurrentLead(l.id)} className="btn btn-square btn-ghost inline-flex items-center">
-                                        <TrashIcon className="w-5 pl-1 mr-2" />
-                                        </button>
+                                    <button onClick={deleteCurrentLead} className="btn btn-square btn-ghost inline-flex items-center">
+  <TrashIcon className="w-5 pl-1 mr-2" />
 
-                                        <Link to={`/app/drivers/${l.id}/${encodeURIComponent(l.firstname)}`} className="ml-2">
-                                        <button className="btn btn-square btn-ghost inline-flex items-center w-20">View details</button>
-                                        </Link>
+</button>
+
+<Link to={`/app/drivers/${l.id}/${encodeURIComponent(l.first_name)}`} className="ml-2">
+  <button className="btn btn-square btn-ghost inline-flex items-center w-20">View details</button>
+</Link>
 
                                     </td>
                                 </tr>
